@@ -2,7 +2,9 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
+from django.conf import settings
 
+user_model = settings.AUTH_USER_MODEL
 class BaseUser(AbstractUser):
     email=models.EmailField(unique=True)
     username=models.CharField(max_length=150, unique=True)
@@ -15,7 +17,7 @@ class BaseUser(AbstractUser):
     phone=models.PositiveIntegerField()
     is_admin=models.BooleanField(default=False)
     is_witness=models.BooleanField(default=False)
-    User = get_user_model()
+   
 
 class Tenant(BaseUser):
     pass
