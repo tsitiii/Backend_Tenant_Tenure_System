@@ -5,5 +5,5 @@ import Rent
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api',include(Rent.urls) )
+    path('api/',include('Rent.urls') )
 ]

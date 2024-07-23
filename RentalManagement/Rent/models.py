@@ -19,23 +19,16 @@ class BaseUser(AbstractUser):
     is_witness=models.BooleanField(default=False)
    
 
-class Tenant(BaseUser):
-    pass
-
-class Tenure(BaseUser):
-    pass
-
-
 class Profile(models.Model):
-     user=models.OneToOneField(BaseUser,on_delete=models.CASCADE, related_name='profile')
-     bio=models.TextField(blank=True, max_length=255, default="Add a few words about yourself.")
-     created_at=models.DateTimeField(auto_now_add=True)
-     updated_at=models.DateTimeField(auto_now=True)
-     picture=models.ImageField(upload_to='/', null=True, blank=True)
-     
-     def __str__(self) -> str:
-         return f"{self.user.username} 's profile"
-     
+    user = models.OneToOneField(BaseUser, on_delete=models.CASCADE, related_name='profile')
+    bio = models.TextField(blank=True, max_length=255, default="Add a few words about yourself.")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    profile_picture = models.ImageField(upload_to='', null=True, blank=True)
+
+    def __str__(self) -> str:
+        return f"{self.user.username} 's profile"
+    
 class Notification(models.Model):
     title=models.CharField(max_length=100)
     message=models.TextField(blank=True)
@@ -72,7 +65,8 @@ class RentalCondition(models.Model):
         PROPERTY_OLD_NOT_RENTED = "old_not_been_rented"
         PROPERTY_OLD_RENTED = "old_has_been_rented"
     status=models.CharField(
-        choices=Status.choices
+        choices=Status.choices,
+        max_length=100
     )  
     rent_amount=models.PositiveBigIntegerField(null=False,db_index=True )
     agreement_year=models.PositiveSmallIntegerField(
@@ -88,5 +82,5 @@ class Report(models.Model):
     name=models.CharField(blank=False, null=False, max_length=100)
     description=models.TextField()
     created_at=models.DateTimeField(auto_now_add=True)
-    attachment=models.FileField(upload_to='/', null=True, blank=True)
+    attachment=models.FileField(upload_to='', null=True, blank=True)
     
