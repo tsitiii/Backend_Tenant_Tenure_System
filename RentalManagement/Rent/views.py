@@ -1,11 +1,31 @@
-from django.http import HttpResponse
-from rest_framework import status
-from rest_framework.viewsets import ModelViewSet, GenericViewSet
-from rest_framework.mixins import CreateModelMixin
-from django.http import FileResponse
 from .models import *
 from .serializers import *
+from django.http import FileResponse
+from rest_framework import status, viewsets
+from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from rest_framework.mixins import CreateModelMixin
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
+
+class RegisterViewSet(ModelViewSet):
+    queryset = BaseUser.objects.all()
+    serializer_class = RegisterSerializer
+    permission_classes = [AllowAny]
+    http_method_names = ['post']
+ 
+class LoginViewSet(viewsets.ViewSetMixin, TokenObtainPairView):
+    # authentication_classes = [JWTAuthentication]
+    permission_classes = [AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+
 
 class ProfileViewSet(ModelViewSet):
     queryset = Profile.objects.all()

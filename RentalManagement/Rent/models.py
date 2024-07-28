@@ -1,30 +1,54 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth import get_user_model
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, RegexValidator
 from django.conf import settings
 
 user_model = settings.AUTH_USER_MODEL
 class BaseUser(AbstractUser):
+    ROLE_CHOICES = (
+        ('is_admin', 'Administrator'),
+        ('is_tenant', 'Tenant'),
+        ('is_tenure', 'Tenure'),
+        ('is_witness', 'Witness'),
+    )  
+
     email=models.EmailField(unique=True)
-    username=models.CharField(max_length=150, unique=True)
+    username = None
     region=models.CharField(max_length=255, null=True, blank=False)
     city=models.CharField(max_length=100)
     sub_city=models.CharField(max_length=100)
-    kebele=models.CharField(max_length=255, null=True, blank= False)
+    kebele = models.CharField(
+        max_length=3,
+        verbose_name='Kebele',
+        validators=[
+            RegexValidator(
+                regex=r'^\d+$',
+                message='The kebele must be a number.'
+            )
+        ]
+    )
+    def save(self, *args, **kwargs):
+        kebele_int = int(self.kebele)
+        if 0 < kebele_int < 10:
+            self.kebele = f"{kebele_int:02d}"
+        else:
+            self.kebele = f"{kebele_int:03d}"
+        super().save(*args, **kwargs)
     unique_place=models.TextField()
     house_number=models.PositiveBigIntegerField()
-    phone=models.PositiveIntegerField()
-    is_admin=models.BooleanField(default=False)
-    is_witness=models.BooleanField(default=False)
-   
+    phone=models.PositiveIntegerField(verbose_name='Phone Number', unique=True, null=False, blank=False)
+    role = models.CharField(max_length=30, choices=ROLE_CHOICES)
+    USERNAME_FIELD = 'phone'
+    REQUIRED_FIELDS = ['password', 'first_name', 'last_name']
+    
 
 class Profile(models.Model):
     user = models.OneToOneField(BaseUser, on_delete=models.CASCADE, related_name='profile')
     bio = models.TextField(blank=True, max_length=255, default="Add a few words about yourself.")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    profile_picture = models.ImageField(upload_to='', null=True, blank=True)
+    profile_picture = models.ImageField(upload_to='images/', null=True, blank=True)
 
     def __str__(self) -> str:
         return f"{self.user.username} 's profile"
@@ -56,7 +80,7 @@ class Property(models.Model):
     kebele=models.CharField(max_length=255, null=True, blank= False)
     unique_place=models.TextField()
     house_number=models.PositiveBigIntegerField()
-    owner=models.ForeignKey(BaseUser, on_delete=models.CASCADE)
+    owner=models.ForeignKey(BaseUser, on_delete=models.CASCADE, related_name='property')
     number_of_rooms=models.PositiveBigIntegerField()
 
 class RentalCondition(models.Model):

@@ -1,7 +1,44 @@
 from rest_framework import serializers
 from .models import *
+from django.contrib.auth.hashers import make_password
+from phonenumber_field.serializerfields import PhoneNumberField
+from django.contrib.auth import authenticate
 
-from decimal import Decimal
+class RegisterSerializer(serializers.ModelSerializer):
+    # password = serializers.CharField(write_only=True)
+    class Meta:
+        model=BaseUser
+        fields = [
+            'id',
+            'email',
+            'region',
+            'city',
+            'sub_city',
+            'kebele',
+            'unique_place',
+            'house_number',
+            'phone',
+            'role',
+            'password'
+        ]
+        extra_kwargs={
+             'password': {'write_only': True}
+        }
+    def create(self, validated_data):
+        validated_data['password'] = make_password(validated_data['password'])
+        return super().create(validated_data)
+
+class LoginSerializer(serializers.ModelSerializer):
+    phone = PhoneNumberField()
+    password = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        user = authenticate(request=self.context.get('request'), phone=data['phone'], password=data['password'])
+        if user and user.is_active:
+            return user
+        raise serializers.ValidationError("Invalid credentials.")
+
+
 
 class ProfileSerializer(serializers.ModelSerializer):
     # picture = serializers.ImageField(null=True, blank=True, source='profile_picture')
@@ -9,7 +46,6 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ['id', 'user', 'bio', 'profile_picture']
-
 
 
 class NotificationSerializer(serializers.ModelSerializer):

@@ -1,18 +1,25 @@
-from .views import *
-from rest_framework.routers import SimpleRouter, DefaultRouter
-from rest_framework_nested import routers
-
-from django.contrib import admin
 from django.urls import path, include
-import Rent
+from .views import (
+    ProfileViewSet,
+    PropertyViewSet,
+    NotificationViewSet,
+    ReportViewSet,
+    RentalConditionViewSet,
+    RegisterViewSet,
+    LoginViewSet
+)
+from rest_framework.routers import DefaultRouter
 
-router=DefaultRouter()
-router.register('profiles',ProfileViewSet)
+router = DefaultRouter()
+router.register('profiles', ProfileViewSet)
 router.register('property', PropertyViewSet)
 router.register('notification', NotificationViewSet)
 router.register('report', ReportViewSet)
 router.register('rental', RentalConditionViewSet)
+router.register('register',RegisterViewSet)
+# urlpatterns=router.urls
 
-
-urlpatterns = router.urls
-
+urlpatterns = [
+    path('login/', LoginViewSet.as_view({ 'post':'create'})),
+    path('', include(router.urls)),
+]
