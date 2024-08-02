@@ -15,7 +15,7 @@ class RegisterViewSet(ModelViewSet):
     queryset = BaseUser.objects.all()
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
-    http_method_names = ['post']
+    # http_method_names = ['post']
  
 class LoginViewSet(viewsets.ViewSetMixin, TokenObtainPairView):
     # authentication_classes = [JWTAuthentication]
@@ -25,6 +25,10 @@ class LoginViewSet(viewsets.ViewSetMixin, TokenObtainPairView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
+
+class WitnessViewSet(ModelViewSet):
+    queryset=BaseUser.objects.filter(role='is_witness')
+    serializer_class=WitnessSerializer
 
 
 class ProfileViewSet(ModelViewSet):
@@ -53,3 +57,5 @@ class RentalConditionViewSet(ModelViewSet):
 class ReportViewSet(CreateModelMixin,GenericViewSet):
     queryset=Report.objects.all()
     serializer_class=ReportSerializer
+
+    

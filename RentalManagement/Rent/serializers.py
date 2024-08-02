@@ -10,11 +10,11 @@ class RegisterSerializer(serializers.ModelSerializer):
         model=BaseUser
         fields = [
             'id',
-            'email',
+            'first_name',
             'region',
             'city',
             'sub_city',
-            'kebele',
+            # 'kebele',
             'unique_place',
             'house_number',
             'phone',
@@ -38,6 +38,10 @@ class LoginSerializer(serializers.ModelSerializer):
             return user
         raise serializers.ValidationError("Invalid credentials.")
 
+class WitnessSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=BaseUser
+        fields=['first_name', 'last_name','kebele_ID', 'role']
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -53,11 +57,12 @@ class NotificationSerializer(serializers.ModelSerializer):
         model=Notification
         fields=['id','title', 'message', 'recipient','status' ]
 
+
 class PropertySerializer(serializers.ModelSerializer):
 
     class Meta:
         model=Property
-        fields=['id','name', 'description', 'region','city', 'sub_city',
+        fields=['id','house_type' ,'region','city', 'sub_city',
                 'kebele', 'unique_place','house_number','owner', 'number_of_rooms']
 
 class RentalConditionSerializer(serializers.ModelSerializer):

@@ -1,4 +1,6 @@
 from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+
 from .views import (
     ProfileViewSet,
     PropertyViewSet,
@@ -6,9 +8,9 @@ from .views import (
     ReportViewSet,
     RentalConditionViewSet,
     RegisterViewSet,
-    LoginViewSet
+    LoginViewSet,
+    WitnessViewSet
 )
-from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 router.register('profiles', ProfileViewSet)
@@ -17,6 +19,7 @@ router.register('notification', NotificationViewSet)
 router.register('report', ReportViewSet)
 router.register('rental', RentalConditionViewSet)
 router.register('register',RegisterViewSet)
+router.register('AddWitness',WitnessViewSet, basename='witness')
 # urlpatterns=router.urls
 
 urlpatterns = [

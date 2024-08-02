@@ -4,6 +4,8 @@ sqlparse==0.5.0
 tzdata==2024.1
 djangorestframework
 djangorestframework-simplejwt
-pillow
+Pillow==10.4.0
 psycopg2-binary
 mysqlclient
+phonenumbers==8.13.40
+django-phonenumber-field==8.0.0
