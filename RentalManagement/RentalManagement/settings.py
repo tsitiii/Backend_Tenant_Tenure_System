@@ -26,12 +26,13 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
     
     'Rent.apps.RentConfig',
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
+    'django.contrib.staticfiles',  # required for serving swagger ui's css/js files
+    'drf_yasg',
 
 ]
 

@@ -141,7 +141,8 @@ class Property(models.Model):
     house_number=models.PositiveBigIntegerField()
     owner=models.ForeignKey(BaseUser, on_delete=models.CASCADE, related_name='property')
     house_type=models.CharField(max_length=255, choices=TYPE_CHOICES)
-    number_of_rooms=models.PositiveBigIntegerField()
+    number_of_rooms=models.PositiveIntegerField()
+
     def __str__(self):
         return f"{self.owner.first_name}'s Property"
 
