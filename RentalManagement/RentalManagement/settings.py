@@ -1,5 +1,5 @@
 from datetime import timedelta 
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -49,7 +49,7 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60), #user authenticated using this token or get access to server
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=90), # is used to obtain a new access token without requiring the user to re-authenticate.
+    'REFRESH_TOKEN_LIFETIME': timedelta(seconds=5), # is used to obtain a new access token without requiring the user to re-authenticate.
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': False,
     'UPDATE_LAST_LOGIN': False,
@@ -101,7 +101,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'RentalManagement.wsgi.application'
 
-
+LOGIN_REDIRECT_URL='api/login'
+# EMAIL_BACKENDS = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_FILE_PATH= BASE_DIR / 'emails'
+EMAIL_HOST = 'smtp.gmail.com'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -115,11 +119,11 @@ DATABASES = {
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'railway',
+#         'NAME': 'Tenure Tenant',
 #         'USER': 'postgres',
-#         "PASSWORD":'NBhKYtbYYNoddlmYsusVDFQkZcTGcfYh',
-#         'HOST': 'viaduct.proxy.rlwy.net',
-#         'PORT': '29789'
+#         "PASSWORD":'pass123#pass',
+#         'HOST': 'localhost',
+#         'PORT': ''
 #     }
 # }
 
@@ -159,7 +163,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
-
+MEDIA_URL='/media/'
+MEDIA_ROOT=os.path.join(BASE_DIR,'media')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 

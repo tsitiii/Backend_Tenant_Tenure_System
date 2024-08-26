@@ -9,7 +9,9 @@ from .views import (
     RentalConditionViewSet,
     RegisterViewSet,
     LoginViewSet,
-    WitnessViewSet
+    WitnessViewSet,
+    ContactUsViewSet,
+    # PasswordResetRequestViewSet
 )
 
 router = DefaultRouter()
@@ -20,6 +22,8 @@ router.register('report', ReportViewSet)
 router.register('rental', RentalConditionViewSet)
 router.register('register',RegisterViewSet)
 router.register('AddWitness',WitnessViewSet, basename='witness')
+router.register('contactUs',ContactUsViewSet)
+# router.register('passwordReset',PasswordResetRequestViewSet)
 # urlpatterns=router.urls
 
 urlpatterns = [

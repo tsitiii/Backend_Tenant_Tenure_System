@@ -3,8 +3,7 @@ from django.contrib.auth.models import AbstractUser,BaseUserManager
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, RegexValidator
 from django.conf import settings
-
-
+from django.db.models import Q
 user_model = settings.AUTH_USER_MODEL
 
 class BaseUserManager(BaseUserManager):
@@ -42,18 +41,20 @@ class BaseUser(AbstractUser):
     ROLE_CHOICES = (
         ('is_admin', 'Administrator'),
         ('is_tenant', 'Tenant'),
-        ('is_tenure', 'Tenure'),
+        ('is_landlord', 'Landlord'),
         ('is_witness', 'Witness'),
     ) 
     email = models.EmailField(unique=True, null=True, blank=True)
     username = None
+    first_name=models.CharField(max_length=255, verbose_name="your name")
+    father_name=models.CharField(max_length=255, verbose_name="Father name")
+    last_name=models.CharField(max_length=255, verbose_name="Grand father name")
     region=models.CharField(max_length=255, null=True, blank=False)
     city=models.CharField(max_length=100)
     sub_city=models.CharField(max_length=100)
     kebele = models.CharField(
         max_length=3,
         null=True,
-        verbose_name='Kebele',
         validators=[
             RegexValidator(
                 regex=r'^\d+$',
@@ -69,19 +70,16 @@ class BaseUser(AbstractUser):
         if 0 < kebele_int < 10:
             self.kebele = f"{kebele_int:02d}"
         elif kebele_int>9:
-            self.kebele = f"{kebele_int:03d}"
+            self.kebele = f"{kebele_int:3d}"
         else:
             self.kebele_int = 0  
         super().save(*args, **kwargs)
     
     unique_place=models.TextField()
-    house_number=models.PositiveBigIntegerField(null=True, blank=True)
+    house_number=models.PositiveIntegerField(unique=True, null=True, blank=True)
     phone = models.CharField(
         verbose_name='Phone Number',
-        max_length=13,
-        unique=True,
-        null=False,
-        blank=False,
+        max_length=13, unique=True, null=False, blank=False,
         validators=[
             RegexValidator(
                 regex=r'^2519\d{8}$|^09\d{8}$',
@@ -89,19 +87,30 @@ class BaseUser(AbstractUser):
             )
         ]
     )
-    kebele_ID=models.ImageField()
+
+
+    kebele_ID=models.ImageField(upload_to='Rent/images')
+    file = models.FileField('Rent/images')
     role = models.CharField(max_length=30, choices=ROLE_CHOICES, null=True)
+    created_at=models.DateTimeField(auto_now=True)
     USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = ['first_name','password']
 
-    
+
+class PasswordResetRequest(models.Model):
+    user = models.ForeignKey(BaseUser, on_delete=models.CASCADE)
+    token = models.CharField(max_length=255, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    expired_at = models.DateTimeField()
+
 
 class Profile(models.Model):
     user = models.OneToOneField(BaseUser, on_delete=models.CASCADE, related_name='profile')
     bio = models.TextField(blank=True, max_length=255, default="Add a few words about yourself.")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    profile_picture = models.ImageField(upload_to='images/', null=True, blank=True)
+    profile_picture = models.ImageField(upload_to='Rent/images/', null=True, blank=True)
 
     def __str__(self) -> str:
         return f"{self.user.username} 's profile"
@@ -131,8 +140,6 @@ class Property(models.Model):
         ("Full House", "Full House"),
         ("Service House", "Service House")
     )
-    # name=models.CharField(max_length=100, null=False, db_index=True)
-    # description=models.TextField()
     region=models.CharField(max_length=255, null=False)
     city=models.CharField(max_length=100)
     sub_city=models.CharField(max_length=100)
@@ -157,7 +164,7 @@ class RentalCondition(models.Model):
         max_length=100,
         verbose_name="Property condition"
     )  
-    rent_amount=models.PositiveBigIntegerField(null=False,db_index=True )
+    rent_amount=models.PositiveBigIntegerField(null=False,db_index=True ,verbose_name='Rent amount in birr')
     agreement_year=models.PositiveSmallIntegerField(
           validators=[MinValueValidator(2)]
     )
@@ -167,11 +174,46 @@ class RentalCondition(models.Model):
     
 
 class Report(models.Model):
-    type=models.CharField(max_length=100)
-    name=models.CharField(blank=False, null=False, max_length=100)
-    description=models.TextField()
-    created_at=models.DateTimeField(auto_now_add=True)
-    attachment=models.FileField(upload_to='', null=True, blank=True)
+    total_tenants = models.PositiveIntegerField(default=0)
+    total_landlords = models.PositiveIntegerField(default=0)
+    total_users = models.PositiveIntegerField(default=0)
+    total_admins = models.PositiveIntegerField(default=0)
+    total_witnesses = models.PositiveIntegerField(default=0)
+    updated_at = models.DateTimeField(auto_now=True)
+    attachment=models.FileField(upload_to='Rent/files', null=True, blank=True)
+
+    @classmethod
+    def update_report(cls):
+        """
+        Update the report with the latest data from the BaseUser model.
+        """
+        report, created = cls.objects.get_or_create(id=1)
+        report.total_tenants = BaseUser.objects.filter(role='is_tenant').count()
+        report.total_landlords = BaseUser.objects.filter(role='is_landlord').count()
+        report.total_users = BaseUser.objects.exclude(role__in=['is_admin', 'is_witness']).count()
+        report.total_admins = BaseUser.objects.filter(role='is_admin').count()
+        report.total_witnesses = BaseUser.objects.filter(role='is_witness').count()
+        report.save()
     
     def __str__(self) -> str:
         return f"{self.type}- {self.name}"
+    
+class ContactUs(models.Model):
+    name=models.CharField(max_length=200)
+    phone = models.CharField(
+        verbose_name='Phone Number',
+        max_length=13, unique=True, null=False, blank=False,
+        validators=[
+            RegexValidator(
+                regex=r'^2519\d{8}$|^09\d{8}$',
+                message='Please enter a valid Ethiopian phone number starting with 251 or 09 and followed by 8 digits.'
+            )
+        ]
+    )
+    message=models.TextField(db_index=True)
+
+class News(models.model):
+    description=models.TextField()
+    created_at=models.DateTimeField(auto_now=True)
+    image=models.ImageField(upload_to='Rent/images')
+    file=models.FileField(upload_to='Rent/files')
