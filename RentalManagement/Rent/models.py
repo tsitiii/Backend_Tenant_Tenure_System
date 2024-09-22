@@ -6,6 +6,7 @@ from django.conf import settings
 from django.db.models import Q
 user_model = settings.AUTH_USER_MODEL
 
+
 class BaseUserManager(BaseUserManager):
     def _create_user(self, phone, password, **extra_fields):
         """
@@ -17,6 +18,7 @@ class BaseUserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user
+
 
     def create_user(self, phone, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', False)
@@ -121,7 +123,7 @@ class Notification(models.Model):
     message=models.TextField(blank=True)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
-    recipient=models.ForeignKey(BaseUser, on_delete=models.CASCADE, related_name='notifications')
+    # recipient=models.ForeignKey(BaseUser, on_delete=models.CASCADE, related_name='notifications')
     class Status(models.TextChoices):
         DRAFT='draft' 
         SENT='sent'
@@ -212,8 +214,8 @@ class ContactUs(models.Model):
     )
     message=models.TextField(db_index=True)
 
-class News(models.model):
-    description=models.TextField()
-    created_at=models.DateTimeField(auto_now=True)
-    image=models.ImageField(upload_to='Rent/images')
-    file=models.FileField(upload_to='Rent/files')
+# class News(models.model):
+#     description=models.TextField()
+#     created_at=models.DateTimeField(auto_now=True)
+#     image=models.ImageField(upload_to='Rent/images')
+#     file=models.FileField(upload_to='Rent/files')
