@@ -1,4 +1,4 @@
 /myenv
 db.sqlite3
 __pycache/
-/migrations/
+migrations/
