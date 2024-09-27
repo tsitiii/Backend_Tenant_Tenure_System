@@ -170,6 +170,8 @@ class RentalCondition(models.Model):
     agreement_year=models.PositiveSmallIntegerField(
           validators=[MinValueValidator(2)]
     )
+
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='rental_conditions')
     
     def __str__(self) -> str:
         return f"Rented: {self.rent_amount},Birr for {self.agreement_year} "
