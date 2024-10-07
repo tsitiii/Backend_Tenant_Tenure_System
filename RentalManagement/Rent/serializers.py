@@ -44,13 +44,12 @@ class LoginSerializer(serializers.ModelSerializer):
         if user and user.is_active:
             return user
         raise serializers.ValidationError("Invalid credentials.")
-    
-    
-class PasswordResetRequestSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PasswordResetRequest
-        fields = ['id', 'user', 'token', 'created_at', 'updated_at', 'expired_at']
 
+
+class PasswordResetSerializer(serializers.ModelSerializer):
+    class Meta:
+       model =  BaseUser
+       fields = ['password']
 
 class WitnessSerializer(serializers.ModelSerializer):
     class Meta:
@@ -69,21 +68,14 @@ class ProfileSerializer(serializers.ModelSerializer):
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model=Notification
-        fields=['id','title', 'message', 'recipient','status' ]
-
+        fields=['id','title', 'message','status' ]
 
 class PropertySerializer(serializers.ModelSerializer):
-
     class Meta:
         model=Property
-        fields=['id','house_type' ,'region','city', 'sub_city',
-                'kebele', 'unique_place','house_number','owner', 'number_of_rooms']
-
-class RentalConditionSerializer(serializers.ModelSerializer):
-    # payment=serializers.PositiveBigIntegerField(null=False,db_index=True, source='rent-amount' )
-    class Meta:
-        model=RentalCondition
-        fields=['id','rent_amount','agreement_year','status']
+        # fields=['id','house_type' ,'region','city', 'sub_city',
+        #         'kebele', 'unique_place','house_number','owner', 'number_of_rooms']
+        fields='__all__'
 
 class ReportSerializer(serializers.ModelSerializer):
 
@@ -96,33 +88,7 @@ class ContactUsSerializer(serializers.ModelSerializer):
         model=ContactUs
         fields='__all__'
 
-
-
-# class ResetPasswordEmailRequestSerializer(serializers.Serializer):
-#     email = serializers.EmailField(min_length=2)
-
-#     redirect_url = serializers.CharField(max_length=500, required=False)
-
-#     class Meta:
-#         fields = ['email']
-
-#     def validate(self, attrs):
-#         try:
-#             email=attrs.get('email','')
-#             if BaseUser.objects.filter(email=email).exists():
-#                user=BaseUser.objects.get(email=email)
-#                uidb64=urlsafe_base64_encode(user.id)
-#                token=PasswordResetTokenGenerator().make_token(user)
-#                current_site=get_current_site(request=attrs['data'].get('request')).domain
-#                relativeLink=reverse('email-verify')
-#                absurl='https://'+current_site + \
-#                  relativeLink+"?token="+str(token)
-#                email_body   ='hi'+user.username+'use the link below to verify your email.\n'
-#                data={'email_body': email_body,'to_email':user.email,
-#                      'email_subject':'verify your email'}
-#                Util.send_email(data)
-#             return attrs
-#         except expression as identifier:
-#             pass
-
-#         return super().validate(attrs)
+class NewsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = News
+        fields = '__all__'

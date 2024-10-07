@@ -6,12 +6,12 @@ from .views import (
     PropertyViewSet,
     NotificationViewSet,
     ReportViewSet,
-    RentalConditionViewSet,
     RegisterViewSet,
     LoginViewSet,
     WitnessViewSet,
     ContactUsViewSet,
-    # PasswordResetRequestViewSet
+    PasswordResetViewSet,
+    NewsViewSet
 )
 
 router = DefaultRouter()
@@ -19,11 +19,12 @@ router.register('profiles', ProfileViewSet)
 router.register('property', PropertyViewSet)
 router.register('notification', NotificationViewSet)
 router.register('report', ReportViewSet)
-router.register('rental', RentalConditionViewSet)
 router.register('register',RegisterViewSet)
 router.register('AddWitness',WitnessViewSet, basename='witness')
 router.register('contactUs',ContactUsViewSet)
-# router.register('passwordReset',PasswordResetRequestViewSet)
+router.register('passwordReset', PasswordResetViewSet, basename='password-reset')
+router.register('news',NewsViewSet)
+
 # urlpatterns=router.urls
 
 urlpatterns = [

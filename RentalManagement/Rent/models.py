@@ -16,9 +16,8 @@ class BaseUserManager(BaseUserManager):
             raise ValueError('The phone number must be set')
         user = self.model(phone=phone, **extra_fields)
         user.set_password(password)
-        user.save(using=self._db)
+        user.save(using=self._db) 
         return user
-
 
     def create_user(self, phone, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', False)
@@ -90,21 +89,13 @@ class BaseUser(AbstractUser):
         ]
     )
 
-
     kebele_ID=models.ImageField(upload_to='Rent/images')
     file = models.FileField('Rent/images')
+    profile_picture = models.ImageField(upload_to= 'Rent/images', verbose_name= "profile picture")
     role = models.CharField(max_length=30, choices=ROLE_CHOICES, null=True)
     created_at=models.DateTimeField(auto_now=True)
     USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = ['first_name','password']
-
-
-class PasswordResetRequest(models.Model):
-    user = models.ForeignKey(BaseUser, on_delete=models.CASCADE)
-    token = models.CharField(max_length=255, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    expired_at = models.DateTimeField()
 
 
 class Profile(models.Model):
@@ -142,6 +133,12 @@ class Property(models.Model):
         ("Full House", "Full House"),
         ("Service House", "Service House")
     )
+
+    TYPE_CHOICES_PAY = (
+        ("Tenant", "Tenant"),
+        ("Landlord", "Landlord")
+    )
+
     region=models.CharField(max_length=255, null=False)
     city=models.CharField(max_length=100)
     sub_city=models.CharField(max_length=100)
@@ -151,12 +148,6 @@ class Property(models.Model):
     owner=models.ForeignKey(BaseUser, on_delete=models.CASCADE, related_name='property')
     house_type=models.CharField(max_length=255, choices=TYPE_CHOICES)
     number_of_rooms=models.PositiveIntegerField()
-
-    def __str__(self):
-        return f"{self.owner.first_name}'s Property"
-
-
-class RentalCondition(models.Model):
     class Status(models.TextChoices):
         NEW_PROPERTY = "new"
         OLD_PROPERTY_NOT_BEEN_RENTED = "old_not_been_rented"
@@ -167,14 +158,17 @@ class RentalCondition(models.Model):
         verbose_name="Property condition"
     )  
     rent_amount=models.PositiveBigIntegerField(null=False,db_index=True ,verbose_name='Rent amount in birr')
-    agreement_year=models.PositiveSmallIntegerField(
-          validators=[MinValueValidator(2)]
-    )
+    Lease_year=models.PositiveSmallIntegerField(validators=[MinValueValidator(2)],
+                                                 verbose_name= "Lease year" )
+    pre_payment_birr = models.PositiveBigIntegerField(verbose_name = "pre payment paid in birr")
+    pre_payment_month = models.PositiveSmallIntegerField(verbose_name = "pre  payment paid in month",
+                                                          validators=[MinValueValidator(1)] )
+    document = models.FileField(upload_to = 'Rent/files', verbose_name = 'ownership document')
+    payment_date = models.DateTimeField(auto_now=True)
+    other_bills = models.CharField(max_length=255, choices=TYPE_CHOICES_PAY)
 
-    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='rental_conditions')
-    
-    def __str__(self) -> str:
-        return f"Rented: {self.rent_amount},Birr for {self.agreement_year} "
+    def __str__(self):
+        return f"{self.owner.first_name}'s Property"
     
 
 class Report(models.Model):
@@ -184,7 +178,7 @@ class Report(models.Model):
     total_admins = models.PositiveIntegerField(default=0)
     total_witnesses = models.PositiveIntegerField(default=0)
     updated_at = models.DateTimeField(auto_now=True)
-    attachment=models.FileField(upload_to='Rent/files', null=True, blank=True)
+    
 
     @classmethod
     def update_report(cls):
@@ -200,7 +194,7 @@ class Report(models.Model):
         report.save()
     
     def __str__(self) -> str:
-        return f"{self.type}- {self.name}"
+        return f"{self.total_users}"
     
 class ContactUs(models.Model):
     name=models.CharField(max_length=200)
@@ -216,8 +210,8 @@ class ContactUs(models.Model):
     )
     message=models.TextField(db_index=True)
 
-# class News(models.model):
-#     description=models.TextField()
-#     created_at=models.DateTimeField(auto_now=True)
-#     image=models.ImageField(upload_to='Rent/images')
-#     file=models.FileField(upload_to='Rent/files')
+class News(models.Model):
+    description=models.TextField()
+    created_at=models.DateTimeField(auto_now=True)
+    image=models.ImageField(upload_to='Rent/images')
+    file=models.FileField(upload_to='Rent/files')
