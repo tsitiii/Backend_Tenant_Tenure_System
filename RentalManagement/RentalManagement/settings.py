@@ -15,7 +15,7 @@ SECRET_KEY = 'django-insecure-tm5vq5elzbo)lw4uhul%hcb=3do^@7%(np0@cp54nx5dz4%4e#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.vercel.app']
 
 
 # Application definition
@@ -109,23 +109,24 @@ EMAIL_HOST = 'smtp.gmail.com'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'Tenure_Tenant',
+        'PORT':'3306',
+        'HOST': 'localhost',
+        'USER': 'root',
+        'PASSWORD': 'new_password123',
     }
 }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'Tenure Tenant',
-#         'USER': 'postgres',
-#         "PASSWORD":'pass123#pass',
-#         'HOST': 'localhost',
-#         'PORT': ''
-#     }
-# }
 
 
 # Password validation

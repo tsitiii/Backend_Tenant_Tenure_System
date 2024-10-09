@@ -208,7 +208,7 @@ class ContactUs(models.Model):
             )
         ]
     )
-    message=models.TextField(db_index=True)
+    message=models.TextField()
 
 class News(models.Model):
     description=models.TextField()
