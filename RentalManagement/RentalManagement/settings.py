@@ -39,9 +39,9 @@ INSTALLED_APPS = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        # {'UNAUTHENTICATED_USER': None},
-        # 'rest_framework.authentication.SessionAuthentication',
-        # 'rest_framework.authentication.BasicAuthentication',
+        {'UNAUTHENTICATED_USER': None},
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
         #this are all different classes that can be used to authenticate our users, its just choice one of the above is enough
     )
 }

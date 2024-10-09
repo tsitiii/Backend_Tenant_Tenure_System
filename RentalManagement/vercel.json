@@ -1,13 +1,20 @@
 {
-    "builds": [{
-        "src": "RentalManagement/wsgi.py",
-        "use": "@vercel/python",
-        "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
-    }],
+    "version": 2,
+    "builds": [
+        {
+            "src": "RentalManagement/wsgi.py",
+            "use": "@vercel/python",
+            "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
+        }
+    ],
     "routes": [
         {
+            "src": "/api/(.*)",  
+            "dest": "/RentalManagement/wsgi.py"
+        },
+        {
             "src": "/(.*)",
-            "dest": "RentalManagement/wsgi.py"
+            "dest": "/RentalManagement/wsgi.py"
         }
     ]
 }
