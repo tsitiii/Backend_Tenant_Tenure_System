@@ -21,7 +21,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             'region',
             'city',
             'sub_city',
-            # 'kebele',
+            'kebele',
             'unique_place',
             'house_number',
             'phone',

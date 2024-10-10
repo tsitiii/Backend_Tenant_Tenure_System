@@ -182,9 +182,7 @@ class Report(models.Model):
 
     @classmethod
     def update_report(cls):
-        """
-        Update the report with the latest data from the BaseUser model.
-        """
+     
         report, created = cls.objects.get_or_create(id=1)
         report.total_tenants = BaseUser.objects.filter(role='is_tenant').count()
         report.total_landlords = BaseUser.objects.filter(role='is_landlord').count()
