@@ -15,7 +15,7 @@ SECRET_KEY = 'django-insecure-tm5vq5elzbo)lw4uhul%hcb=3do^@7%(np0@cp54nx5dz4%4e#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.vercel.app']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -37,13 +37,12 @@ INSTALLED_APPS = [
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
+    'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        {'UNAUTHENTICATED_USER': None},
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
-        #this are all different classes that can be used to authenticate our users, its just choice one of the above is enough
-    )
+    ],
+    'UNAUTHENTICATED_USER': None,  # Move this outside of DEFAULT_AUTHENTICATION_CLASSES if needed
 }
 
 
