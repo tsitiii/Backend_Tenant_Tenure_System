@@ -33,8 +33,12 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'django.contrib.staticfiles',  # required for serving swagger ui's css/js files
     'drf_yasg',
+    'corsheaders',
 
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = ['http://localhost:5173']
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -78,9 +82,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'RentalManagement.urls'
+
 
 TEMPLATES = [
     {

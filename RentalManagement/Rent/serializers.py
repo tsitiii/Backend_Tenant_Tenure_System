@@ -25,6 +25,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             'unique_place',
             'house_number',
             'phone',
+            'profile_picture',
             'role',
             'password'
         ]
