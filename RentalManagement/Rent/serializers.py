@@ -54,8 +54,16 @@ class PasswordResetSerializer(serializers.ModelSerializer):
 
 class WitnessSerializer(serializers.ModelSerializer):
     class Meta:
-        model=BaseUser
-        fields=['first_name', 'father_name','kebele_ID', 'role']
+        model=Witness
+        fields=['id','first_name', 'father_name','kebele_ID','property']
+    def validate(self, attrs):
+        property_instance = attrs.get('property')
+        witness_count = Witness.objects.filter(property=property_instance).count()
+        
+        if witness_count >= 3:
+            raise serializers.ValidationError("This property already has 3 witnesses.")
+        
+        return attrs
 
 
 class ProfileSerializer(serializers.ModelSerializer):

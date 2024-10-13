@@ -40,11 +40,11 @@ class BaseUserManager(BaseUserManager):
 class BaseUser(AbstractUser):
     objects = BaseUserManager()
     ROLE_CHOICES = (
+        ('is_witness', 'Witness'),
         ('is_admin', 'Administrator'),
         ('is_tenant', 'Tenant'),
         ('is_landlord', 'Landlord'),
-        ('is_witness', 'Witness'),
-    ) 
+    )
     email = models.EmailField(unique=True, null=True, blank=True)
     username = None
     first_name=models.CharField(max_length=255, verbose_name="your name")
@@ -92,41 +92,10 @@ class BaseUser(AbstractUser):
     kebele_ID=models.ImageField(upload_to='Rent/images')
     file = models.FileField('Rent/images')
     profile_picture = models.ImageField(upload_to= 'Rent/images', verbose_name= "profile picture")
-    role = models.CharField(max_length=30, choices=ROLE_CHOICES, null=True)
+    role = models.CharField(max_length=30, choices=ROLE_CHOICES)
     created_at=models.DateTimeField(auto_now=True)
     USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = ['first_name','password']
-
-
-class Profile(models.Model):
-    user = models.OneToOneField(BaseUser, on_delete=models.CASCADE, related_name='profile')
-    bio = models.TextField(blank=True, max_length=255, default="Add a few words about yourself.")
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    profile_picture = models.ImageField(upload_to='Rent/images/', null=True, blank=True)
-
-    def __str__(self) -> str:
-        return f"{self.user.username} 's profile"
-    
-
-class Notification(models.Model):
-    title=models.CharField(max_length=100)
-    message=models.TextField(blank=True)
-    created_at=models.DateTimeField(auto_now_add=True)
-    updated_at=models.DateTimeField(auto_now=True)
-    # recipient=models.ForeignKey(BaseUser, on_delete=models.CASCADE, related_name='notifications')
-    class Status(models.TextChoices):
-        DRAFT='draft' 
-        SENT='sent'
-        READ='read'
-    status=models.CharField(
-        max_length=140,
-        choices= Status.choices,
-        default=Status.DRAFT
-    )
-    def __str__(self) -> str:
-        return f"{self.title} - {self.get_status_display()}"    
-
 
 class Property(models.Model):
     TYPE_CHOICES=(
@@ -170,6 +139,46 @@ class Property(models.Model):
     def __str__(self):
         return f"{self.owner.first_name}'s Property"
     
+class Witness(models.Model):
+    first_name=models.CharField(max_length=255, verbose_name="your name")
+    father_name=models.CharField(max_length=255, verbose_name="Father name")
+    # phone = models.CharField(max_length=15, unique=True)
+    kebele_ID=models.ImageField(upload_to='Rent/images')
+    property = models.ForeignKey(Property, related_name='witnesses', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Witness {self.first_name} for {self.property}"
+    
+
+class Profile(models.Model):
+    user = models.OneToOneField(BaseUser, on_delete=models.CASCADE, related_name='profile')
+    bio = models.TextField(blank=True, max_length=255, default="Add a few words about yourself.")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    profile_picture = models.ImageField(upload_to='Rent/images/', null=True, blank=True)
+
+    def __str__(self) -> str:
+        return f"{self.user.username} 's profile"
+    
+
+class Notification(models.Model):
+    title=models.CharField(max_length=100)
+    message=models.TextField(blank=True)
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
+    # recipient=models.ForeignKey(BaseUser, on_delete=models.CASCADE, related_name='notifications')
+    class Status(models.TextChoices):
+        DRAFT='draft' 
+        SENT='sent'
+        READ='read'
+    status=models.CharField(
+        max_length=140,
+        choices= Status.choices,
+        default=Status.DRAFT
+    )
+    def __str__(self) -> str:
+        return f"{self.title} - {self.get_status_display()}"    
+
 
 class Report(models.Model):
     total_tenants = models.PositiveIntegerField(default=0)

@@ -51,8 +51,8 @@ REST_FRAMEWORK = {
 
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60), #user authenticated using this token or get access to server
-    'REFRESH_TOKEN_LIFETIME': timedelta(seconds=5), # is used to obtain a new access token without requiring the user to re-authenticate.
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=30), #user authenticated using this token or get access to server
+    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=15), # is used to obtain a new access token without requiring the user to re-authenticate.
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': False,
     'UPDATE_LAST_LOGIN': False,
@@ -77,12 +77,13 @@ SIMPLE_JWT = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'RentalManagement.urls'
