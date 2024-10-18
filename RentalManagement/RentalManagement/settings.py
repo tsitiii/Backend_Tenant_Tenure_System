@@ -29,11 +29,13 @@ INSTALLED_APPS = [
     
     'Rent.apps.RentConfig',
     'rest_framework',
-    'rest_framework_simplejwt',
     'rest_framework.authtoken',
+    'rest_framework_simplejwt',
+    'djoser',
     'django.contrib.staticfiles',  # required for serving swagger ui's css/js files
     'drf_yasg',
     'corsheaders',
+    
 
 ]
 
@@ -43,10 +45,9 @@ CORS_ALLOWED_ORIGINS = ['http://localhost:5173']
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-    ],
-    'UNAUTHENTICATED_USER': None,  # Move this outside of DEFAULT_AUTHENTICATION_CLASSES if needed
+        # 'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
+    ]
 }
 
 
@@ -71,6 +72,7 @@ SIMPLE_JWT = {
 
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',
+    'AUTH_HEADER_TYPES': ('JWT',),
 }
 
 
@@ -115,23 +117,23 @@ EMAIL_HOST = 'smtp.gmail.com'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'Tenure_Tenant',
-        'PORT':'3306',
-        'HOST': 'localhost',
-        'USER': 'root',
-        'PASSWORD': 'new_password123',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'Tenure_Tenant',
+#         'PORT':'3306',
+#         'HOST': 'localhost',
+#         'USER': 'root',
+#         'PASSWORD': 'new_password123',
+#     }
+# }
 
 
 
@@ -176,5 +178,11 @@ MEDIA_ROOT=os.path.join(BASE_DIR,'media')
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+DJOSER = {
+    'SERIALIZERS':{
+    'user_create': 'Rent.serializers.UserCreateSerializer'
+    }
+}
 
 AUTH_USER_MODEL='Rent.BaseUser'

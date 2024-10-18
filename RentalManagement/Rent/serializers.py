@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from djoser.serializers import UserCreateSerializer
 from .models import *
 from django.contrib.auth.hashers import make_password
 from phonenumber_field.serializerfields import PhoneNumberField
@@ -27,6 +28,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             'phone',
             'profile_picture',
             'role',
+            'property',
             'password'
         ]
         extra_kwargs={
@@ -65,7 +67,6 @@ class WitnessSerializer(serializers.ModelSerializer):
         
         return attrs
 
-
 class ProfileSerializer(serializers.ModelSerializer):
     # picture = serializers.ImageField(null=True, blank=True, source='profile_picture')
 
@@ -78,16 +79,25 @@ class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model=Notification
         fields=['id','title', 'message','status' ]
+        
 
 class PropertySerializer(serializers.ModelSerializer):
+    # owner = serializers.CharField(source='owner.phone')  
+    # owner_phone = serializers.CharField(source='owner.phone', read_only=True)
+
     class Meta:
-        model=Property
-        # fields=['id','house_type' ,'region','city', 'sub_city',
-        #         'kebele', 'unique_place','house_number','owner', 'number_of_rooms']
-        fields='__all__'
+        model = Property
+        fields = '__all__'
+
+    # def create(self, validated_data):
+    #     owner_phone = validated_data.pop('owner') 
+    #     owner = BaseUser.objects.filter(phone=owner_phone).first()
+    #     if not owner:
+    #         raise serializers.ValidationError({"owner": "User with this phone number does not exist."})
+    #     property_instance = Property.objects.create(owner=owner, **validated_data)
+    #     return property_instance
 
 class ReportSerializer(serializers.ModelSerializer):
-
     class Meta:
         model=Report
         fields='__all__'
@@ -97,7 +107,7 @@ class ContactUsSerializer(serializers.ModelSerializer):
         model=ContactUs
         fields='__all__'
 
-class NewsSerializer(serializers.ModelSerializer):
+class NewsSerializer(serializers.ModelSerializer):  
     class Meta:
         model = News
         fields = '__all__'

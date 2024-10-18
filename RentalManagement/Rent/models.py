@@ -97,6 +97,7 @@ class BaseUser(AbstractUser):
     USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = ['first_name','password']
 
+
 class Property(models.Model):
     TYPE_CHOICES=(
         ("Full House", "Full House"),
@@ -133,7 +134,7 @@ class Property(models.Model):
     pre_payment_month = models.PositiveSmallIntegerField(verbose_name = "pre  payment paid in month",
                                                           validators=[MinValueValidator(1)] )
     document = models.FileField(upload_to = 'Rent/files', verbose_name = 'ownership document')
-    payment_date = models.DateTimeField(auto_now=True)
+    payment_date = models.DateTimeField()
     other_bills = models.CharField(max_length=255, choices=TYPE_CHOICES_PAY)
 
     def __str__(self):

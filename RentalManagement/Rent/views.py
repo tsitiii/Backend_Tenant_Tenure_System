@@ -59,12 +59,13 @@ class NotificationViewSet(ModelViewSet):
 
 class PropertyViewSet(ModelViewSet):
     # permission_classes = [IsAuthenticated]
-    queryset=Property.objects.all()
-    serializer_class=PropertySerializer
+    queryset = Property.objects.all()
+    serializer_class = PropertySerializer
+
     def destroy(self, request, *args, **kwargs):
-        property=get_object_or_404(Property, pk=kwargs['pk'])
-        property.delete()
-        return super().destroy(request, *args, **kwargs)
+        property_instance = get_object_or_404(Property, pk=kwargs['pk'])
+        property_instance.delete()
+        return Response({"detail": "Property deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
 
 class ReportViewSet(ModelViewSet):
     # permission_classes = [IsAuthenticated]
