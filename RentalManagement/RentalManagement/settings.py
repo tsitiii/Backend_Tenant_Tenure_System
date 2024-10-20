@@ -31,11 +31,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'djoser',
     'django.contrib.staticfiles',  # required for serving swagger ui's css/js files
     'drf_yasg',
     'corsheaders',
-    
 
 ]
 
@@ -52,8 +52,9 @@ REST_FRAMEWORK = {
 
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=30), #user authenticated using this token or get access to server
-    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=15), # is used to obtain a new access token without requiring the user to re-authenticate.
+    'AUTH_HEADER_TYPES': ('JWT',),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15 ), #user authenticated using this token or get access to server
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30), # is used to obtain a new access token without requiring the user to re-authenticate.
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': False,
     'UPDATE_LAST_LOGIN': False,
@@ -72,7 +73,7 @@ SIMPLE_JWT = {
 
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',
-    'AUTH_HEADER_TYPES': ('JWT',),
+    
 }
 
 
@@ -181,8 +182,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 DJOSER = {
     'SERIALIZERS':{
-    'user_create': 'Rent.serializers.UserCreateSerializer'
+    'user_create': 'Rent.serializers.UserCreateSerializer',
+    'current_user': 'Rent.serializers.UserSerializer'
     }
 }
+
 
 AUTH_USER_MODEL='Rent.BaseUser'

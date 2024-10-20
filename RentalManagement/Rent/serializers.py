@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from djoser.serializers import UserCreateSerializer
+from djoser.serializers import  UserSerializer as BaseUserSerializer,UserCreateSerializer as BaseUserCreateSerializer
 from .models import *
 from django.contrib.auth.hashers import make_password
 from phonenumber_field.serializerfields import PhoneNumberField
@@ -10,9 +10,9 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.sites.shortcuts import get_current_site
 
 
-class RegisterSerializer(serializers.ModelSerializer):
+class RegisterSerializer( BaseUserCreateSerializer):
     # password = serializers.CharField(write_only=True)
-    class Meta:
+    class Meta( BaseUserCreateSerializer.Meta):
         model=BaseUser
         fields = [
             'id',
@@ -37,6 +37,57 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data['password'])
         return super().create(validated_data)
+
+
+class UserCreateSerializer( BaseUserCreateSerializer):
+       class Meta( BaseUserCreateSerializer.Meta):
+            model=BaseUser
+            fields = [
+                'id',
+                'first_name',
+                'father_name',
+                'last_name',
+                'region',
+                'city',
+                'sub_city',
+                'kebele',
+                'unique_place',
+                'house_number',
+                'phone',
+                'profile_picture',
+                'role',
+                'password'
+            ]
+            extra_kwargs={
+                'password': {'write_only': True}
+            }
+            def create(self, validated_data):
+                validated_data['password'] = make_password(validated_data['password'])
+                return super().create(validated_data)
+
+
+# class UserSerializer(BaseUserSerializer):
+#     class Meta(BaseUserSerializer.Meta):
+#         model=BaseUser
+#         fields = [
+#                 'id',
+#                 'first_name',
+#                 'father_name',
+#                 'last_name',
+#                 'region',
+#                 'city',
+#                 'sub_city',
+#                 'kebele',
+#                 'unique_place',
+#                 'house_number',
+#                 'phone',
+#                 'profile_picture',
+#                 'role',
+#                 'password'
+#             ]
+
+
+
 
 class LoginSerializer(serializers.ModelSerializer):
     phone = PhoneNumberField()

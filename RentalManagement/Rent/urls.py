@@ -12,7 +12,8 @@ from .views import (
     WitnessViewSet,
     ContactUsViewSet,
     PasswordResetViewSet,
-    NewsViewSet
+    NewsViewSet,
+    LogoutView
 )
 
 router = DefaultRouter()
@@ -31,5 +32,6 @@ router.register('news',NewsViewSet)
 urlpatterns = [
     path('login/', LoginViewSet.as_view()), 
     path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('logout/', LogoutView.as_view(), name='logout'),
     path('', include(router.urls)),
 ]

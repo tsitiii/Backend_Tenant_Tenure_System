@@ -1,10 +1,8 @@
 import uuid
 from .models import *
 from .serializers import *
-from twilio.rest import Client
 from django.conf import settings
-from django.utils import timezone
-from django.http import FileResponse
+from rest_framework.views import APIView
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from django.contrib.auth.hashers import make_password
@@ -15,7 +13,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
+from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
+from rest_framework_simplejwt.tokens import AccessToken
 
 class RegisterViewSet(ModelViewSet):
     queryset = BaseUser.objects.all()
@@ -30,6 +29,33 @@ class LoginViewSet(TokenObtainPairView):
         serializer.is_valid(raise_exception=True)
         tokens = serializer.validated_data
         return Response(tokens, status=status.HTTP_200_OK)
+
+
+class LogoutView(APIView):
+    # permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        token = request.data.get("token")
+        if not token:
+            return Response({"detail": "Token is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # Create an AccessToken object from the provided token
+            access_token = AccessToken(token)
+
+            # Get the corresponding OutstandingToken
+            outstanding_token = OutstandingToken.objects.get(token=access_token)
+
+            # Blacklist the token
+            BlacklistedToken.objects.create(token=outstanding_token)
+
+            return Response({"detail": "Successfully logged out."}, status=status.HTTP_205_RESET_CONTENT)
+        except OutstandingToken.DoesNotExist:
+            return Response({"detail": "Token does not exist."}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+
 
 class WitnessViewSet(ModelViewSet):
     # permission_classes = [IsAuthenticated]
