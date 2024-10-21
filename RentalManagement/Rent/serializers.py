@@ -10,9 +10,9 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.sites.shortcuts import get_current_site
 
 
-class RegisterSerializer( BaseUserCreateSerializer):
+class RegisterSerializer(serializers.ModelSerializer):
     # password = serializers.CharField(write_only=True)
-    class Meta( BaseUserCreateSerializer.Meta):
+    class Meta:
         model=BaseUser
         fields = [
             'id',
@@ -87,8 +87,6 @@ class UserCreateSerializer( BaseUserCreateSerializer):
 #             ]
 
 
-
-
 class LoginSerializer(serializers.ModelSerializer):
     phone = PhoneNumberField()
     password = serializers.CharField(write_only=True)
@@ -133,20 +131,38 @@ class NotificationSerializer(serializers.ModelSerializer):
         
 
 class PropertySerializer(serializers.ModelSerializer):
-    # owner = serializers.CharField(source='owner.phone')  
-    # owner_phone = serializers.CharField(source='owner.phone', read_only=True)
+    owner_phone = serializers.CharField(write_only=True)  # Accepts phone number for creating a property
 
     class Meta:
         model = Property
-        fields = '__all__'
+        fields =[ 'id', 
+                    'house_type',
+                    'region', 
+                    'city', 
+                    'sub_city', 
+                    'kebele', 
+                    'unique_place',
+                    'house_number',
+                    'number_of_rooms',
+                    'status',
+                    'rent_amount',
+                    'Lease_year',
+                    'pre_payment_birr',
+                    'pre_payment_month',
+                    'document',
+                    'payment_date',
+                    'other_bills',
+                    'owner_phone' ]
 
-    # def create(self, validated_data):
-    #     owner_phone = validated_data.pop('owner') 
-    #     owner = BaseUser.objects.filter(phone=owner_phone).first()
-    #     if not owner:
-    #         raise serializers.ValidationError({"owner": "User with this phone number does not exist."})
-    #     property_instance = Property.objects.create(owner=owner, **validated_data)
-    #     return property_instance
+    def create(self, validated_data):
+        owner_phone = validated_data.pop('owner_phone')
+        owner = BaseUser.objects.filter(phone=owner_phone).first() 
+
+        if not owner:
+            raise serializers.ValidationError({"owner_phone": "User with this phone number does not exist."})
+        validated_data['owner'] = owner 
+        property_instance = Property.objects.create(**validated_data)
+        return property_instance
 
 class ReportSerializer(serializers.ModelSerializer):
     class Meta:

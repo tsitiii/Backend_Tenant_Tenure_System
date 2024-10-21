@@ -133,7 +133,7 @@ class Property(models.Model):
     pre_payment_birr = models.PositiveBigIntegerField(verbose_name = "pre payment paid in birr")
     pre_payment_month = models.PositiveSmallIntegerField(verbose_name = "pre  payment paid in month",
                                                           validators=[MinValueValidator(1)] )
-    document = models.FileField(upload_to = 'Rent/files', verbose_name = 'ownership document')
+    document = models.FileField(upload_to = 'Rent/files', verbose_name = 'ownership document', null=True)
     payment_date = models.DateTimeField()
     other_bills = models.CharField(max_length=255, choices=TYPE_CHOICES_PAY)
 
