@@ -186,6 +186,5 @@ DJOSER = {
     'current_user': 'Rent.serializers.UserSerializer'
     }
 }
-
-
+ 
 AUTH_USER_MODEL='Rent.BaseUser'

@@ -40,13 +40,8 @@ class LogoutView(APIView):
             return Response({"detail": "Token is required."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            # Create an AccessToken object from the provided token
             access_token = AccessToken(token)
-
-            # Get the corresponding OutstandingToken
             outstanding_token = OutstandingToken.objects.get(token=access_token)
-
-            # Blacklist the token
             BlacklistedToken.objects.create(token=outstanding_token)
 
             return Response({"detail": "Successfully logged out."}, status=status.HTTP_205_RESET_CONTENT)

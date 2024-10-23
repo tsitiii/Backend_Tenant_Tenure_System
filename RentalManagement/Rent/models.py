@@ -40,7 +40,6 @@ class BaseUserManager(BaseUserManager):
 class BaseUser(AbstractUser):
     objects = BaseUserManager()
     ROLE_CHOICES = (
-        ('is_witness', 'Witness'),
         ('is_admin', 'Administrator'),
         ('is_tenant', 'Tenant'),
         ('is_landlord', 'Landlord'),
@@ -92,7 +91,7 @@ class BaseUser(AbstractUser):
     kebele_ID=models.ImageField(upload_to='Rent/images')
     file = models.FileField('Rent/images')
     profile_picture = models.ImageField(upload_to= 'Rent/images', verbose_name= "profile picture")
-    role = models.CharField(max_length=30, choices=ROLE_CHOICES)
+    role = models.CharField(max_length=30, choices=ROLE_CHOICES, default='is_tenant')
     created_at=models.DateTimeField(auto_now=True)
     USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = ['first_name','password']
