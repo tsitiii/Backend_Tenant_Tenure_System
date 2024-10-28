@@ -30,7 +30,7 @@ router.register('news',NewsViewSet)
 # urlpatterns=router.urls
 
 urlpatterns = [
-    path('login/', LoginViewSet.as_view()), 
+    path('login/', LoginViewSet.as_view(), name='login'),
     path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('', include(router.urls)),

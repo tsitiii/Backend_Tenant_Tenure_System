@@ -38,65 +38,17 @@ class RegisterSerializer(serializers.ModelSerializer):
         validated_data['password'] = make_password(validated_data['password'])
         return super().create(validated_data)
 
-
-class UserCreateSerializer( BaseUserCreateSerializer):
-       class Meta( BaseUserCreateSerializer.Meta):
-            model=BaseUser
-            fields = [
-                'id',
-                'first_name',
-                'father_name',
-                'last_name',
-                'region',
-                'city',
-                'sub_city',
-                'kebele',
-                'unique_place',
-                'house_number',
-                'phone',
-                'profile_picture',
-                'role',
-                'password'
-            ]
-            extra_kwargs={
-                'password': {'write_only': True}
-            }
-            def create(self, validated_data):
-                validated_data['password'] = make_password(validated_data['password'])
-                return super().create(validated_data)
-
-
-# class UserSerializer(BaseUserSerializer):
-#     class Meta(BaseUserSerializer.Meta):
-#         model=BaseUser
-#         fields = [
-#                 'id',
-#                 'first_name',
-#                 'father_name',
-#                 'last_name',
-#                 'region',
-#                 'city',
-#                 'sub_city',
-#                 'kebele',
-#                 'unique_place',
-#                 'house_number',
-#                 'phone',
-#                 'profile_picture',
-#                 'role',
-#                 'password'
-#             ]
-
-
 class LoginSerializer(serializers.ModelSerializer):
-    phone = PhoneNumberField()
     password = serializers.CharField(write_only=True)
+    class Meta:
+        model = BaseUser
+        fields =['phone', 'password']
 
     def validate(self, data):
         user = authenticate(request=self.context.get('request'), phone=data['phone'], password=data['password'])
         if user and user.is_active:
-            return user
+            return user  
         raise serializers.ValidationError("Invalid credentials.")
-
 
 class PasswordResetSerializer(serializers.ModelSerializer):
     class Meta:
@@ -163,6 +115,8 @@ class PropertySerializer(serializers.ModelSerializer):
         validated_data['owner'] = owner 
         property_instance = Property.objects.create(**validated_data)
         return property_instance
+    
+
 
 class ReportSerializer(serializers.ModelSerializer):
     class Meta:

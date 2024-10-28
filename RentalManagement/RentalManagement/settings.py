@@ -180,11 +180,5 @@ MEDIA_ROOT=os.path.join(BASE_DIR,'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-DJOSER = {
-    'SERIALIZERS':{
-    'user_create': 'Rent.serializers.UserCreateSerializer',
-    'current_user': 'Rent.serializers.UserSerializer'
-    }
-}
  
 AUTH_USER_MODEL='Rent.BaseUser'

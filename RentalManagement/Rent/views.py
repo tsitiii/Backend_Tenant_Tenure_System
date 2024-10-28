@@ -14,7 +14,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
-from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 
 class RegisterViewSet(ModelViewSet):
     queryset = BaseUser.objects.all()
@@ -24,11 +24,23 @@ class RegisterViewSet(ModelViewSet):
  
 class LoginViewSet(TokenObtainPairView):
     permission_classes = [AllowAny]
+
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        serializer = LoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        tokens = serializer.validated_data
-        return Response(tokens, status=status.HTTP_200_OK)
+        user = serializer.validated_data 
+        access = AccessToken.for_user(user)
+        access['role'] = user.role  
+
+        refresh = RefreshToken.for_user(user)
+
+        return Response({
+            'user_id': user.id,
+            'role': user.role,
+            'access': str(access),
+            'refresh': str(refresh),
+        }, status=status.HTTP_200_OK)
+
 
 
 class LogoutView(APIView):
@@ -122,3 +134,10 @@ class NewsViewSet(ModelViewSet):
     permission_classes = [IsAdminUser]
     queryset = News.objects.all()
     serializer_class = NewsSerializer
+
+
+
+#     {
+#     "phone": "215944353983",
+#     "password": "pass1234"
+# }
