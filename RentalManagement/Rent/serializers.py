@@ -42,12 +42,12 @@ class LoginSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     class Meta:
         model = BaseUser
-        fields =['phone', 'password']
+        fields =['phone', 'password', 'role']
 
     def validate(self, data):
-        user = authenticate(request=self.context.get('request'), phone=data['phone'], password=data['password'])
+        user = authenticate(request=self.context.get('request'), phone=data['phone'], password=data['password'], role = data['role'])
         if user and user.is_active:
-            return user  
+            return user
         raise serializers.ValidationError("Invalid credentials.")
 
 class PasswordResetSerializer(serializers.ModelSerializer):

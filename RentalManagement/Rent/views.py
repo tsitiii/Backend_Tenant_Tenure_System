@@ -42,7 +42,6 @@ class LoginViewSet(TokenObtainPairView):
         }, status=status.HTTP_200_OK)
 
 
-
 class LogoutView(APIView):
     # permission_classes = [IsAuthenticated]
 
@@ -131,7 +130,7 @@ class PasswordResetViewSet(viewsets.ModelViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 class NewsViewSet(ModelViewSet):
-    permission_classes = [IsAdminUser]
+    # permission_classes = [IsAdminUser]
     queryset = News.objects.all()
     serializer_class = NewsSerializer
 
