@@ -218,7 +218,9 @@ class ContactUs(models.Model):
     message=models.TextField()
 
 class News(models.Model):
+    title = models.CharField(max_length = 2552)
     description=models.TextField()
     created_at=models.DateTimeField(auto_now=True)
     image=models.ImageField(upload_to='Rent/images')
+    photo = models.ImageField(upload_to='Rent/images')
     file=models.FileField(upload_to='Rent/files')
