@@ -162,11 +162,11 @@ class Profile(models.Model):
     
 
 class Notification(models.Model):
-    title=models.CharField(max_length=100)
-    message=models.TextField(blank=True)
+    title=models.CharField(max_length=100, null=True, blank = True)
+    message=models.TextField(blank=True, null=True)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
-    # recipient=models.ForeignKey(BaseUser, on_delete=models.CASCADE, related_name='notifications')
+    recipient=models.ForeignKey(BaseUser, on_delete=models.CASCADE, related_name='notifications')
     class Status(models.TextChoices):
         DRAFT='draft' 
         SENT='sent'
@@ -218,7 +218,7 @@ class ContactUs(models.Model):
     message=models.TextField()
 
 class News(models.Model):
-    title = models.CharField(max_length = 2552)
+    title = models.CharField(max_length = 2552, null=True, blank= True)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now=True)
     image = models.ImageField(upload_to='Rent/images')
