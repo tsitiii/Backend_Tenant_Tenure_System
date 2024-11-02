@@ -204,7 +204,7 @@ class Report(models.Model):
         return f"{self.total_users}"
     
 class ContactUs(models.Model):
-    name=models.CharField(max_length=200)
+    name = models.CharField(max_length=200)
     phone = models.CharField(
         verbose_name='Phone Number',
         max_length=13, unique=True, null=False, blank=False,
@@ -219,8 +219,8 @@ class ContactUs(models.Model):
 
 class News(models.Model):
     title = models.CharField(max_length = 2552)
-    description=models.TextField()
-    created_at=models.DateTimeField(auto_now=True)
-    image=models.ImageField(upload_to='Rent/images')
-    photo = models.ImageField(upload_to='Rent/images')
-    file=models.FileField(upload_to='Rent/files')
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now=True)
+    image = models.ImageField(upload_to='Rent/images')
+    photo = models.ImageField(upload_to='Rent/images', null=True, blank=True)
+    file = models.FileField(upload_to='Rent/files', null=True, blank=True)
