@@ -162,11 +162,11 @@ class Profile(models.Model):
     
 
 class Notification(models.Model):
-    title=models.CharField(max_length=100, null=True, blank = True)
-    message=models.TextField(blank=True, null=True)
-    created_at=models.DateTimeField(auto_now_add=True)
-    updated_at=models.DateTimeField(auto_now=True)
-    recipient=models.ForeignKey(BaseUser, on_delete=models.CASCADE, related_name='notifications')
+    title = models.CharField(max_length=100, null=True, blank = True)
+    message = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    recipient = models.ForeignKey(BaseUser, on_delete=models.CASCADE, related_name='notifications')
     class Status(models.TextChoices):
         DRAFT='draft' 
         SENT='sent'
@@ -177,7 +177,7 @@ class Notification(models.Model):
         default=Status.DRAFT
     )
     def __str__(self) -> str:
-        return f"{self.title} - {self.get_status_display()}"    
+        return f"{self.title} "    
 
 
 class Report(models.Model):

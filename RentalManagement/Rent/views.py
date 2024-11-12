@@ -85,7 +85,7 @@ class ProfileViewSet(ModelViewSet):
         return {'request': self.request}
 
 class NotificationViewSet(ModelViewSet):
-    permission_classes = [IsAdminUser]
+    # permission_classes = [IsAdminUser]
     queryset=Notification.objects.all()
     serializer_class=NotificationSerializer
 

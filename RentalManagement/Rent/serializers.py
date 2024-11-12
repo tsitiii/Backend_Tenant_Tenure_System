@@ -79,7 +79,8 @@ class ProfileSerializer(serializers.ModelSerializer):
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model=Notification
-        fields=['id','title', 'message','status' ]
+        # fields=['id','title', 'message','status' ]
+        fields ='__all__'
         
 
 class PropertySerializer(serializers.ModelSerializer):
