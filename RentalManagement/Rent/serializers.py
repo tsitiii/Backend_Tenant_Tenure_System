@@ -28,7 +28,6 @@ class RegisterSerializer(serializers.ModelSerializer):
             'phone',
             'profile_picture',
             'role',
-            'property',
             'password'
         ]
         extra_kwargs={
