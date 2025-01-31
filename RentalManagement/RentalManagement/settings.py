@@ -29,27 +29,33 @@ INSTALLED_APPS = [
     
     'Rent.apps.RentConfig',
     'rest_framework',
-    'rest_framework_simplejwt',
     'rest_framework.authtoken',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
+    'djoser',
     'django.contrib.staticfiles',  # required for serving swagger ui's css/js files
     'drf_yasg',
+    'corsheaders',
 
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = ['http://localhost:5173']
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-    ],
-    'UNAUTHENTICATED_USER': None,  # Move this outside of DEFAULT_AUTHENTICATION_CLASSES if needed
+        # 'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
+    ]
 }
 
 
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60), #user authenticated using this token or get access to server
-    'REFRESH_TOKEN_LIFETIME': timedelta(seconds=5), # is used to obtain a new access token without requiring the user to re-authenticate.
+    'AUTH_HEADER_TYPES': ('JWT',),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15 ), #user authenticated using this token or get access to server
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30), # is used to obtain a new access token without requiring the user to re-authenticate.
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': False,
     'UPDATE_LAST_LOGIN': False,
@@ -68,20 +74,24 @@ SIMPLE_JWT = {
 
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',
+    
 }
 
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'RentalManagement.urls'
+
 
 TEMPLATES = [
     {
@@ -109,23 +119,23 @@ EMAIL_HOST = 'smtp.gmail.com'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'Tenure_Tenant',
-        'PORT':'3306',
-        'HOST': 'localhost',
-        'USER': 'root',
-        'PASSWORD': 'new_password123',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'tenure',
+#         'PORT':'3306',
+#         'HOST': 'localhost',
+#         'USER': 'root',
+#         'PASSWORD': 'new_password123',
+#     }
+# }
 
 
 
@@ -171,4 +181,5 @@ MEDIA_ROOT=os.path.join(BASE_DIR,'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+ 
 AUTH_USER_MODEL='Rent.BaseUser'
