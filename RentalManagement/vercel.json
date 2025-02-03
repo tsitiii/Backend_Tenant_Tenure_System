@@ -13,6 +13,11 @@
             "dest": "/RentalManagement/wsgi.py"
         },
         {
+            "src": "/static/(.*)",
+            "dest": "/static/$1"
+          },
+      
+        {
             "src": "/(.*)",
             "dest": "/RentalManagement/wsgi.py"
         }
