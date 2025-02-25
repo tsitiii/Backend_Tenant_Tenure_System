@@ -3,8 +3,11 @@ import os
 from pathlib import Path
 
 import os
-from dotenv import load_dotenv
+from dotenv import load_dotenv # type: ignore
 from urllib.parse import urlparse
+import cloudinary # type: ignore  2025-02-03 13:31:15.626522+00
+import cloudinary.uploader # type: ignore
+import cloudinary.api #type: ignore
 
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -42,11 +45,33 @@ INSTALLED_APPS = [
 
     'drf_yasg',
     'corsheaders',
+    'cloudinary_storage',
+    'cloudinary',
 
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWED_ORIGINS = ['http://localhost:5173']
+
+ALLOWED_HOSTS = []
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173", 
+    "http://127.0.0.1:5173",
+]
+
+CORS_ALLOW_METHODS = [
+    "GET",
+    "POST",
+    "PUT",
+    "DELETE",
+    "OPTIONS",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173"
+]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -144,6 +169,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 #     }
 # }
 
+DATABASE_URL='postgresql://neondb_owner:npg_9fWw5LYPJOEz@ep-still-mud-a8co92ij.eastus2.azure.neon.tech/neondb?sslmode=require'
 tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
 
 DATABASES = {
@@ -154,6 +180,9 @@ DATABASES = {
         'PASSWORD': tmpPostgres.password,
         'HOST': tmpPostgres.hostname,
         'PORT': 5432,
+        'OPTIONS': {
+            'sslmode': 'require',
+        },
     }
 }
 
@@ -201,5 +230,10 @@ MEDIA_ROOT=os.path.join(BASE_DIR,'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
- 
 AUTH_USER_MODEL='Rent.BaseUser'
+
+cloudinary.config(
+    cloud_name = 'dolvppffs',
+    api_key = '239543991824988',
+    api_secret = 'c3-i5s3tLHwC_bEarhlVhmf5TKc',
+)

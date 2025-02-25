@@ -1,9 +1,11 @@
 from django.db import models
+from cloudinary.models import CloudinaryField #type: ignore
 from django.contrib.auth.models import AbstractUser,BaseUserManager
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, RegexValidator
 from django.conf import settings
-from django.db.models import Q
+
+
 user_model = settings.AUTH_USER_MODEL
 
 
@@ -88,9 +90,9 @@ class BaseUser(AbstractUser):
         ]
     )
 
-    kebele_ID=models.ImageField(upload_to='Rent/images')
-    file = models.FileField('Rent/images')
-    profile_picture = models.ImageField(upload_to= 'Rent/images', verbose_name= "profile picture")
+    kebele_ID = CloudinaryField(verbose_name="Kebele ID Image", null =True)
+    file = CloudinaryField(verbose_name="Uploaded File", null = True, blank = True)
+    profile_picture = CloudinaryField(verbose_name="Profile Picture")
     role = models.CharField(max_length=30, choices=ROLE_CHOICES, default='is_tenant')
     created_at=models.DateTimeField(auto_now=True)
     USERNAME_FIELD = 'phone'
@@ -132,7 +134,7 @@ class Property(models.Model):
     pre_payment_birr = models.PositiveBigIntegerField(verbose_name = "pre payment paid in birr")
     pre_payment_month = models.PositiveSmallIntegerField(verbose_name = "pre  payment paid in month",
                                                           validators=[MinValueValidator(1)] )
-    document = models.FileField(upload_to = 'Rent/files', verbose_name = 'ownership document', null=True)
+    document = CloudinaryField(verbose_name='Ownership Document', null=True, blank = True)
     payment_date = models.DateTimeField()
     other_bills = models.CharField(max_length=255, choices=TYPE_CHOICES_PAY)
 
@@ -143,7 +145,7 @@ class Witness(models.Model):
     first_name=models.CharField(max_length=255, verbose_name="your name")
     father_name=models.CharField(max_length=255, verbose_name="Father name")
     # phone = models.CharField(max_length=15, unique=True)
-    kebele_ID=models.ImageField(upload_to='Rent/images')
+    kebele_ID = CloudinaryField(verbose_name="Kebele ID Image")
     property = models.ForeignKey(Property, related_name='witnesses', on_delete=models.CASCADE)
 
     def __str__(self):
@@ -155,7 +157,8 @@ class Profile(models.Model):
     bio = models.TextField(blank=True, max_length=255, default="Add a few words about yourself.")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    profile_picture = models.ImageField(upload_to='Rent/images/', null=True, blank=True)
+
+    profile_picture = CloudinaryField('profile picture')
 
     def __str__(self) -> str:
         return f"{self.user.username} 's profile"
@@ -221,6 +224,6 @@ class News(models.Model):
     title = models.CharField(max_length = 2552, null=True, blank= True)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now=True)
-    image = models.ImageField(upload_to='Rent/images')
-    photo = models.ImageField(upload_to='Rent/images', null=True, blank=True)
-    file = models.FileField(upload_to='Rent/files', null=True, blank=True)
+    image = models.ImageField()
+    photo = models.ImageField(null=True, blank=True)
+    file = models.FileField(null=True, blank=True)
