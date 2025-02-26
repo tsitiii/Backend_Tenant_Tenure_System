@@ -48,5 +48,4 @@ cloudinary==1.42.2
 django-cloudinary-storage==0.3.0
 pillow==10.4.0
 psycopg2-binary==2.9.9
-mysqlclient==2.2.4
 PyMySQL==1.0.2
