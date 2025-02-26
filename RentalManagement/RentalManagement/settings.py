@@ -3,12 +3,13 @@ import os
 from pathlib import Path
 
 import os
-from dotenv import load_dotenv # type: ignore
+from dotenv import load_dotenv 
 from urllib.parse import urlparse
-import cloudinary # type: ignore  2025-02-03 13:31:15.626522+00
-import cloudinary.uploader # type: ignore
-import cloudinary.api #type: ignore
+import cloudinary 
+import cloudinary.uploader
+import cloudinary.api 
 
+import dj_database_url
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -157,35 +158,24 @@ EMAIL_HOST = 'smtp.gmail.com'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
-import pymysql
-pymysql.install_as_MySQLdb()
+
+
+DATABASE_URL='postgresql://neondb_owner:npg_9fWw5LYPJOEz@ep-still-mud-a8co92ij.eastus2.azure.neon.tech/neondb?sslmode=require'
+tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'tenure',
-        'PORT':'3306',
-        'HOST': 'localhost',
-        'USER': 'root',
-        'PASSWORD': 'new_password123',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': tmpPostgres.path.replace('/', ''),
+        'USER': tmpPostgres.username,
+        'PASSWORD': tmpPostgres.password,
+        'HOST': tmpPostgres.hostname,
+        'PORT': 5432,
+        'OPTIONS': {
+            'sslmode': 'require',
+        },
     }
 }
-
-# DATABASE_URL='postgresql://neondb_owner:npg_9fWw5LYPJOEz@ep-still-mud-a8co92ij.eastus2.azure.neon.tech/neondb?sslmode=require'
-# tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': tmpPostgres.path.replace('/', ''),
-#         'USER': tmpPostgres.username,
-#         'PASSWORD': tmpPostgres.password,
-#         'HOST': tmpPostgres.hostname,
-#         'PORT': 5432,
-#         'OPTIONS': {
-#             'sslmode': 'require',
-#         },
-#     }
-# }
 
 
 # Password validation
