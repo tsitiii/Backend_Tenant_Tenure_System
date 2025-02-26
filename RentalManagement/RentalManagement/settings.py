@@ -45,7 +45,6 @@ INSTALLED_APPS = [
 
     'drf_yasg',
     'corsheaders',
-    'cloudinary_storage',
     'cloudinary',
 
 ]
