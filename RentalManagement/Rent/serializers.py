@@ -7,7 +7,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils.translation import gettext_lazy as _
 
 class RegisterSerializer(serializers.ModelSerializer):
-    # password = serializers.CharField(write_only=True)
+
     class Meta:
         model=BaseUser
         fields = [
