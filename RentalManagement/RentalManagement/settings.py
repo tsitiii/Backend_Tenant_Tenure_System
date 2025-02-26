@@ -158,33 +158,33 @@ EMAIL_HOST = 'smtp.gmail.com'
 #     }
 # }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'tenure',
-#         'PORT':'3306',
-#         'HOST': 'localhost',
-#         'USER': 'root',
-#         'PASSWORD': 'new_password123',
-#     }
-# }
-
-DATABASE_URL='postgresql://neondb_owner:npg_9fWw5LYPJOEz@ep-still-mud-a8co92ij.eastus2.azure.neon.tech/neondb?sslmode=require'
-tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': tmpPostgres.path.replace('/', ''),
-        'USER': tmpPostgres.username,
-        'PASSWORD': tmpPostgres.password,
-        'HOST': tmpPostgres.hostname,
-        'PORT': 5432,
-        'OPTIONS': {
-            'sslmode': 'require',
-        },
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'tenure',
+        'PORT':'3306',
+        'HOST': 'localhost',
+        'USER': 'root',
+        'PASSWORD': 'new_password123',
     }
 }
+
+# DATABASE_URL='postgresql://neondb_owner:npg_9fWw5LYPJOEz@ep-still-mud-a8co92ij.eastus2.azure.neon.tech/neondb?sslmode=require'
+# tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': tmpPostgres.path.replace('/', ''),
+#         'USER': tmpPostgres.username,
+#         'PASSWORD': tmpPostgres.password,
+#         'HOST': tmpPostgres.hostname,
+#         'PORT': 5432,
+#         'OPTIONS': {
+#             'sslmode': 'require',
+#         },
+#     }
+# }
 
 
 # Password validation

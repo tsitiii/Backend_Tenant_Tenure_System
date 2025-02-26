@@ -1,13 +1,11 @@
 from django.db import models
-from cloudinary.models import CloudinaryField #type: ignore
 from django.contrib.auth.models import AbstractUser,BaseUserManager
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, RegexValidator
 from django.conf import settings
-
-
+from cloudinary.models import CloudinaryField
 user_model = settings.AUTH_USER_MODEL
-
+RENT_IMAGES_PATH = 'Rent/images'
 
 class BaseUserManager(BaseUserManager):
     def _create_user(self, phone, password, **extra_fields):
@@ -45,19 +43,20 @@ class BaseUser(AbstractUser):
         ('is_admin', 'Administrator'),
         ('is_tenant', 'Tenant'),
         ('is_landlord', 'Landlord'),
+        ('is_witness', 'Witness'),
     )
     email = models.EmailField(unique=True, null=True, blank=True)
     username = None
-    first_name=models.CharField(max_length=255, verbose_name="your name")
-    father_name=models.CharField(max_length=255, verbose_name="Father name")
-    last_name=models.CharField(max_length=255, verbose_name="Grand father name")
-    region=models.CharField(max_length=255, null=True, blank=False)
-    city=models.CharField(max_length=100)
-    sub_city=models.CharField(max_length=100)
+    first_name = models.CharField(max_length=255, verbose_name="your name")
+    father_name = models.CharField(max_length=255, verbose_name="Father name")
+    last_name = models.CharField(max_length=255, verbose_name="Grand father name")
+    region = models.CharField(max_length=255, null=True, blank=False)
+    city = models.CharField(max_length=100)
+    sub_city = models.CharField(max_length=100)
     kebele = models.CharField(
-        max_length=3,
-        null=True,
-        validators=[
+        max_length = 3,
+        null = True,
+        validators = [
             RegexValidator(
                 regex=r'^\d+$',
                 message='The kebele must be a number.'
@@ -90,13 +89,43 @@ class BaseUser(AbstractUser):
         ]
     )
 
-    kebele_ID = CloudinaryField(verbose_name="Kebele ID Image", null =True)
-    file = CloudinaryField(verbose_name="Uploaded File", null = True, blank = True)
-    profile_picture = CloudinaryField(verbose_name="Profile Picture")
-    role = models.CharField(max_length=30, choices=ROLE_CHOICES, default='is_tenant')
+    kebele_ID = CloudinaryField(RENT_IMAGES_PATH)
+    file = models.FileField('Rent/files')
+    profile_picture = CloudinaryField(RENT_IMAGES_PATH, null=True)
+    role = models.CharField(max_length=30, choices=ROLE_CHOICES, null=True, blank = True, default='is_admin')
     created_at=models.DateTimeField(auto_now=True)
     USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = ['first_name','password']
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(BaseUser, on_delete=models.CASCADE, related_name='profile')
+    bio = models.TextField(blank=True, max_length=255, default="Add a few words about yourself.")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    profile_picture = models.ImageField(RENT_IMAGES_PATH)
+
+    def __str__(self) -> str:
+        return f"{self.user.username} 's profile"
+    
+
+class Notification(models.Model):
+    title=models.CharField(max_length=100)
+    message=models.TextField(blank=True, null=True)
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
+   
+    class Status(models.TextChoices):
+        DRAFT='draft' 
+        SENT='sent'
+        READ='read'
+    status=models.CharField(
+        max_length=140,
+        choices= Status.choices,
+        default=Status.DRAFT
+    )
+    def __str__(self) -> str:
+        return f"{self.title} - {self.get_status_display()}"    
 
 
 class Property(models.Model):
@@ -106,19 +135,20 @@ class Property(models.Model):
     )
 
     TYPE_CHOICES_PAY = (
-        ("Tenant", "Tenant"),
-        ("Landlord", "Landlord")
+        ("is_tenant", "Tenant"),
+        ("is_landlord", "Landlord")
     )
 
     region=models.CharField(max_length=255, null=False)
     city=models.CharField(max_length=100)
     sub_city=models.CharField(max_length=100)
-    kebele=models.CharField(max_length=255, null=True, blank= False)
+    kebele=models.CharField(max_length=255, null=True, blank= True)
     unique_place=models.TextField()
     house_number=models.PositiveBigIntegerField()
     owner=models.ForeignKey(BaseUser, on_delete=models.CASCADE, related_name='property')
     house_type=models.CharField(max_length=255, choices=TYPE_CHOICES)
     number_of_rooms=models.PositiveIntegerField()
+    
     class Status(models.TextChoices):
         NEW_PROPERTY = "new"
         OLD_PROPERTY_NOT_BEEN_RENTED = "old_not_been_rented"
@@ -134,54 +164,13 @@ class Property(models.Model):
     pre_payment_birr = models.PositiveBigIntegerField(verbose_name = "pre payment paid in birr")
     pre_payment_month = models.PositiveSmallIntegerField(verbose_name = "pre  payment paid in month",
                                                           validators=[MinValueValidator(1)] )
-    document = CloudinaryField(verbose_name='Ownership Document', null=True, blank = True)
-    payment_date = models.DateTimeField()
-    other_bills = models.CharField(max_length=255, choices=TYPE_CHOICES_PAY)
+    document = models.FileField('Rent/files')
+    payment_date = models.DateTimeField(auto_now=True)
+    other_bills = models.CharField(max_length=255, choices=TYPE_CHOICES_PAY, default='is_landlord')
 
     def __str__(self):
         return f"{self.owner.first_name}'s Property"
     
-class Witness(models.Model):
-    first_name=models.CharField(max_length=255, verbose_name="your name")
-    father_name=models.CharField(max_length=255, verbose_name="Father name")
-    # phone = models.CharField(max_length=15, unique=True)
-    kebele_ID = CloudinaryField(verbose_name="Kebele ID Image")
-    property = models.ForeignKey(Property, related_name='witnesses', on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"Witness {self.first_name} for {self.property}"
-    
-
-class Profile(models.Model):
-    user = models.OneToOneField(BaseUser, on_delete=models.CASCADE, related_name='profile')
-    bio = models.TextField(blank=True, max_length=255, default="Add a few words about yourself.")
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    profile_picture = CloudinaryField('profile picture')
-
-    def __str__(self) -> str:
-        return f"{self.user.username} 's profile"
-    
-
-class Notification(models.Model):
-    title = models.CharField(max_length=100, null=True, blank = True)
-    message = models.TextField(blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    recipient = models.ForeignKey(BaseUser, on_delete=models.CASCADE, related_name='notifications')
-    class Status(models.TextChoices):
-        DRAFT='draft' 
-        SENT='sent'
-        READ='read'
-    status=models.CharField(
-        max_length=140,
-        choices= Status.choices,
-        default=Status.DRAFT
-    )
-    def __str__(self) -> str:
-        return f"{self.title} "    
-
 
 class Report(models.Model):
     total_tenants = models.PositiveIntegerField(default=0)
@@ -207,7 +196,7 @@ class Report(models.Model):
         return f"{self.total_users}"
     
 class ContactUs(models.Model):
-    name = models.CharField(max_length=200)
+    name=models.CharField(max_length=200)
     phone = models.CharField(
         verbose_name='Phone Number',
         max_length=13, unique=True, null=False, blank=False,
@@ -221,9 +210,18 @@ class ContactUs(models.Model):
     message=models.TextField()
 
 class News(models.Model):
-    title = models.CharField(max_length = 2552, null=True, blank= True)
-    description = models.TextField()
-    created_at = models.DateTimeField(auto_now=True)
-    image = models.ImageField()
-    photo = models.ImageField(null=True, blank=True)
-    file = models.FileField(null=True, blank=True)
+    description=models.TextField()
+    created_at=models.DateTimeField(auto_now=True)
+    image=models.ImageField(RENT_IMAGES_PATH)
+    file=models.FileField('Rent/files')
+
+
+class Witness(models.Model):
+    first_name=models.CharField(max_length=255, verbose_name="your name")
+    father_name=models.CharField(max_length=255, verbose_name="Father name")
+    
+    kebele_ID = CloudinaryField(verbose_name="Kebele ID Image")
+    property = models.ForeignKey(Property, related_name='witnesses', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Witness {self.first_name} for {self.property}"
