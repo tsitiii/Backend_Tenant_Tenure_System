@@ -45,3 +45,6 @@ yarl==1.9.4
 python-dotenv == 1.0.1
 whitenoise == 6.8.2
 cloudinary==1.42.2
+django-cloudinary-storage==0.3.0
+
+
