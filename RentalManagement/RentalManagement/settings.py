@@ -157,7 +157,6 @@ EMAIL_HOST = 'smtp.gmail.com'
 # }
 
 
-DATABASE_URL='postgresql://neondb_owner:npg_9fWw5LYPJOEz@ep-still-mud-a8co92ij.eastus2.azure.neon.tech/neondb?sslmode=require'
 tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
 
 DATABASES = {
@@ -168,9 +167,6 @@ DATABASES = {
         'PASSWORD': tmpPostgres.password,
         'HOST': tmpPostgres.hostname,
         'PORT': 5432,
-        'OPTIONS': {
-            'sslmode': 'require',
-        },
     }
 }
 
