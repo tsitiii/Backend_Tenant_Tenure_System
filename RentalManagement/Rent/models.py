@@ -90,7 +90,7 @@ class BaseUser(AbstractUser):
     )
 
     kebele_ID = CloudinaryField(RENT_IMAGES_PATH)
-    file = models.FileField('Rent/files')
+    file = CloudinaryField('Rent/files')
     profile_picture = CloudinaryField(RENT_IMAGES_PATH, null=True)
     role = models.CharField(max_length=30, choices=ROLE_CHOICES, null=True, blank = True, default='is_admin')
     created_at=models.DateTimeField(auto_now=True)
@@ -103,17 +103,17 @@ class Profile(models.Model):
     bio = models.TextField(blank=True, max_length=255, default="Add a few words about yourself.")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    profile_picture = models.ImageField(RENT_IMAGES_PATH)
+    profile_picture = CloudinaryField(RENT_IMAGES_PATH)
 
     def __str__(self) -> str:
         return f"{self.user.username} 's profile"
     
 
 class Notification(models.Model):
-    title=models.CharField(max_length=100)
-    message=models.TextField(blank=True, null=True)
-    created_at=models.DateTimeField(auto_now_add=True)
-    updated_at=models.DateTimeField(auto_now=True)
+    title = models.CharField(max_length=100)
+    message = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     class Status(models.TextChoices):
         DRAFT='draft' 
@@ -129,7 +129,7 @@ class Notification(models.Model):
 
 
 class Property(models.Model):
-    TYPE_CHOICES=(
+    TYPE_CHOICES = (
         ("Full House", "Full House"),
         ("Service House", "Service House")
     )
@@ -139,32 +139,32 @@ class Property(models.Model):
         ("is_landlord", "Landlord")
     )
 
-    region=models.CharField(max_length=255, null=False)
-    city=models.CharField(max_length=100)
-    sub_city=models.CharField(max_length=100)
-    kebele=models.CharField(max_length=255, null=True, blank= True)
-    unique_place=models.TextField()
-    house_number=models.PositiveBigIntegerField()
-    owner=models.ForeignKey(BaseUser, on_delete=models.CASCADE, related_name='property')
-    house_type=models.CharField(max_length=255, choices=TYPE_CHOICES)
-    number_of_rooms=models.PositiveIntegerField()
+    region = models.CharField(max_length=255, null=False)
+    city = models.CharField(max_length=100)
+    sub_city = models.CharField(max_length=100)
+    kebele = models.CharField(max_length=255, null=True, blank= True)
+    unique_place = models.TextField()
+    house_number = models.PositiveBigIntegerField()
+    owner = models.ForeignKey(BaseUser, on_delete=models.CASCADE, related_name='property')
+    house_type = models.CharField(max_length=255, choices=TYPE_CHOICES)
+    number_of_rooms = models.PositiveIntegerField()
     
     class Status(models.TextChoices):
         NEW_PROPERTY = "new"
         OLD_PROPERTY_NOT_BEEN_RENTED = "old_not_been_rented"
         OLD_PROPERTY_HAS_BEEN_RENTED = "old_has_been_rented"
-    status=models.CharField(
-        choices=Status.choices,
-        max_length=100,
-        verbose_name="Property condition"
+    status = models.CharField(
+        choices = Status.choices,
+        max_length = 100,
+        verbose_name = "Property condition"
     )  
-    rent_amount=models.PositiveBigIntegerField(null=False,db_index=True ,verbose_name='Rent amount in birr')
-    Lease_year=models.PositiveSmallIntegerField(validators=[MinValueValidator(2)],
+    rent_amount = models.PositiveBigIntegerField(null=False,db_index=True ,verbose_name='Rent amount in birr')
+    Lease_year = models.PositiveSmallIntegerField(validators=[MinValueValidator(2)],
                                                  verbose_name= "Lease year" )
     pre_payment_birr = models.PositiveBigIntegerField(verbose_name = "pre payment paid in birr")
     pre_payment_month = models.PositiveSmallIntegerField(verbose_name = "pre  payment paid in month",
                                                           validators=[MinValueValidator(1)] )
-    document = models.FileField('Rent/files')
+    document = CloudinaryField('Rent/files')
     payment_date = models.DateTimeField(auto_now=True)
     other_bills = models.CharField(max_length=255, choices=TYPE_CHOICES_PAY, default='is_landlord')
 
@@ -196,7 +196,7 @@ class Report(models.Model):
         return f"{self.total_users}"
     
 class ContactUs(models.Model):
-    name=models.CharField(max_length=200)
+    name = models.CharField(max_length=200)
     phone = models.CharField(
         verbose_name='Phone Number',
         max_length=13, unique=True, null=False, blank=False,
@@ -210,17 +210,17 @@ class ContactUs(models.Model):
     message=models.TextField()
 
 class News(models.Model):
-    description=models.TextField()
-    created_at=models.DateTimeField(auto_now=True)
-    image=models.ImageField(RENT_IMAGES_PATH)
-    file=models.FileField('Rent/files')
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now=True)
+    image = CloudinaryField(RENT_IMAGES_PATH)
+    file = CloudinaryField('Rent/files')
 
 
 class Witness(models.Model):
-    first_name=models.CharField(max_length=255, verbose_name="your name")
-    father_name=models.CharField(max_length=255, verbose_name="Father name")
+    first_name = models.CharField(max_length=255, verbose_name="your name")
+    father_name = models.CharField(max_length=255, verbose_name="Father name")
     
-    kebele_ID = CloudinaryField(verbose_name="Kebele ID Image")
+    kebele_ID = CloudinaryField()
     property = models.ForeignKey(Property, related_name='witnesses', on_delete=models.CASCADE)
 
     def __str__(self):
