@@ -76,12 +76,12 @@ class BaseUser(AbstractUser):
             self.kebele_int = 0  
         super().save(*args, **kwargs)
     
-    unique_place=models.TextField()
-    house_number=models.PositiveIntegerField(unique=True, null=True, blank=True)
+    unique_place = models.TextField()
+    house_number = models.PositiveIntegerField(unique=True, null=True, blank=True)
     phone = models.CharField(
-        verbose_name='Phone Number',
-        max_length=13, unique=True, null=False, blank=False,
-        validators=[
+        verbose_name = 'Phone Number',
+        max_length =13, unique=True, null=False, blank=False,
+        validators = [
             RegexValidator(
                 regex=r'^2519\d{8}$|^09\d{8}$',
                 message='Please enter a valid Ethiopian phone number starting with 251 or 09 and followed by 8 digits.'
@@ -89,11 +89,11 @@ class BaseUser(AbstractUser):
         ]
     )
 
-    kebele_ID = CloudinaryField(RENT_IMAGES_PATH)
-    file = CloudinaryField('Rent/files')
-    profile_picture = CloudinaryField(RENT_IMAGES_PATH, null=True)
+    kebele_ID = CloudinaryField()
+    file = CloudinaryField()
+    profile_picture = CloudinaryField(null=True)
     role = models.CharField(max_length=30, choices=ROLE_CHOICES, null=True, blank = True, default='is_admin')
-    created_at=models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now=True)
     USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = ['first_name','password']
 
@@ -103,7 +103,7 @@ class Profile(models.Model):
     bio = models.TextField(blank=True, max_length=255, default="Add a few words about yourself.")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    profile_picture = CloudinaryField(RENT_IMAGES_PATH)
+    profile_picture = CloudinaryField()
 
     def __str__(self) -> str:
         return f"{self.user.username} 's profile"
@@ -119,7 +119,7 @@ class Notification(models.Model):
         DRAFT='draft' 
         SENT='sent'
         READ='read'
-    status=models.CharField(
+    status = models.CharField(
         max_length=140,
         choices= Status.choices,
         default=Status.DRAFT
@@ -145,7 +145,7 @@ class Property(models.Model):
     kebele = models.CharField(max_length=255, null=True, blank= True)
     unique_place = models.TextField()
     house_number = models.PositiveBigIntegerField()
-    owner = models.ForeignKey(BaseUser, on_delete=models.CASCADE, related_name='property')
+    owner = models.ForeignKey(BaseUser, on_delete = models.CASCADE, related_name='property')
     house_type = models.CharField(max_length=255, choices=TYPE_CHOICES)
     number_of_rooms = models.PositiveIntegerField()
     
@@ -164,7 +164,7 @@ class Property(models.Model):
     pre_payment_birr = models.PositiveBigIntegerField(verbose_name = "pre payment paid in birr")
     pre_payment_month = models.PositiveSmallIntegerField(verbose_name = "pre  payment paid in month",
                                                           validators=[MinValueValidator(1)] )
-    document = CloudinaryField('Rent/files')
+    document = CloudinaryField()
     payment_date = models.DateTimeField(auto_now=True)
     other_bills = models.CharField(max_length=255, choices=TYPE_CHOICES_PAY, default='is_landlord')
 
@@ -207,13 +207,13 @@ class ContactUs(models.Model):
             )
         ]
     )
-    message=models.TextField()
+    message = models.TextField()
 
 class News(models.Model):
     description = models.TextField()
     created_at = models.DateTimeField(auto_now=True)
-    image = CloudinaryField(RENT_IMAGES_PATH)
-    file = CloudinaryField('Rent/files')
+    image = CloudinaryField()
+    file = CloudinaryField()
 
 
 class Witness(models.Model):
